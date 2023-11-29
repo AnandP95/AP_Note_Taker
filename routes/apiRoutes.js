@@ -4,15 +4,31 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
+
+
 // Function to read data from db.json
 function readNotes() {
-  const notesData = fs.readFileSync(path.join(__dirname, '../db.json'), 'utf8');
+  let notesData;
+  try {
+    notesData = fs.readFileSync(path.join(__dirname, '../db.json'), 'utf8');
+  } catch (err) {
+    
+    fs.writeFileSync(path.join(__dirname, '../db.json'), JSON.stringify([{ "title": "Test Title", "text": "Test text" }]), 'utf8');
+    notesData = fs.readFileSync(path.join(__dirname, '../db.json'), 'utf8');
+  }
   return JSON.parse(notesData);
 }
 
+
+
 // Function to write data to db.json
 function writeNotes(notes) {
-  fs.writeFileSync(path.join(__dirname, '../db.json'), JSON.stringify(notes), 'utf8');
+  try {
+    fs.writeFileSync(path.join(__dirname, '../db.json'), JSON.stringify(notes), 'utf8');
+    console.log('Data written:', notes);
+  } catch (err) {
+    console.error('Error writing file:', err);
+  }
 }
 
 // GET /api/notes 
